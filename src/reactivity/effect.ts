@@ -1,6 +1,7 @@
 import { extend } from '../shared'
 
 let activeEffect: ReactiveEffect
+let shouldTrack: boolean = false
 
 class ReactiveEffect {
   private _fn: any
@@ -16,9 +17,18 @@ class ReactiveEffect {
   }
 
   run () {
+    if (!this.isActive) {
+      return this._fn()
+    }
+
+    shouldTrack = true
     activeEffect = this
 
-    return this._fn()
+    const res = this._fn()
+
+    shouldTrack = false
+
+    return res
   }
 
   stop () {
@@ -27,7 +37,6 @@ class ReactiveEffect {
     this.isActive = false
     cleanEffectDeps(this)
     this.onStop && this.onStop()
-    
   }
 }
 
@@ -37,8 +46,14 @@ export function cleanEffectDeps (effect: ReactiveEffect) {
   })
 }
 
+function isTracking () {
+  return shouldTrack && activeEffect !== undefined
+}
+
 let targetMap: Map<any, Map<any, Set<ReactiveEffect>>> = new Map()
 export function track (target, key) {
+  if (!isTracking()) return
+
   let depsMap = targetMap.get(target)
 
   if (!depsMap) {
@@ -54,6 +69,7 @@ export function track (target, key) {
   }
 
   if (!activeEffect) return
+  if (deps.has(activeEffect)) return
 
   deps.add(activeEffect)
   activeEffect.deps.push(deps)
@@ -86,7 +102,7 @@ export function effect (fn, options: any = {}) {
   const _effect = new ReactiveEffect(fn, scheduler)
 
   extend(_effect, options)
-  
+
   _effect.run()
 
   const runner: any = _effect.run.bind(_effect)
