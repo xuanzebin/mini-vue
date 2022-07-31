@@ -44,6 +44,8 @@ export function cleanEffectDeps (effect: ReactiveEffect) {
   effect.deps.forEach(dep => {
     dep.delete(effect)
   })
+
+  effect.deps.length = 0
 }
 
 function isTracking () {
@@ -68,10 +70,11 @@ export function track (target, key) {
     depsMap.set(key, deps)
   }
 
-  if (!activeEffect) return
   if (deps.has(activeEffect)) return
 
+  // 每个 target 下的 key 都存储着对应的 effect
   deps.add(activeEffect)
+  // 告诉当前正在收集依赖的 effect，其需要处理的 deps
   activeEffect.deps.push(deps)
 }
 
