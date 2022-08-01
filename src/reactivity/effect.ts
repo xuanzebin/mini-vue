@@ -3,7 +3,7 @@ import { extend } from '../shared'
 let activeEffect: ReactiveEffect
 let shouldTrack: boolean = false
 
-class ReactiveEffect {
+export class ReactiveEffect {
   private _fn: any
 
   private onStop: (() => void) | undefined
@@ -48,7 +48,7 @@ export function cleanEffectDeps (effect: ReactiveEffect) {
   effect.deps.length = 0
 }
 
-function isTracking () {
+export function isTracking () {
   return shouldTrack && activeEffect !== undefined
 }
 
@@ -70,12 +70,7 @@ export function track (target, key) {
     depsMap.set(key, deps)
   }
 
-  if (deps.has(activeEffect)) return
-
-  // 每个 target 下的 key 都存储着对应的 effect
-  deps.add(activeEffect)
-  // 告诉当前正在收集依赖的 effect，其需要处理的 deps
-  activeEffect.deps.push(deps)
+  trackEffect(deps)
 }
 
 export function trigger (target, key) {
@@ -87,6 +82,19 @@ export function trigger (target, key) {
 
   if (!deps) return
 
+  triggerEffect(deps)
+}
+
+export function trackEffect (deps: Set<ReactiveEffect>) {
+  if (deps.has(activeEffect)) return
+
+  // 每个 target 下的 key 都存储着对应的 effect
+  deps.add(activeEffect)
+  // 告诉当前正在收集依赖的 effect，其需要处理的 deps
+  activeEffect.deps.push(deps)
+}
+
+export function triggerEffect (deps: Set<ReactiveEffect>) {
   for (const dep of deps) {
     if (dep.scheduler) {
       dep.scheduler()
