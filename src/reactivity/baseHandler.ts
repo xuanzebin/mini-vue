@@ -1,6 +1,6 @@
 import { extend, isObject } from "../shared"
 import { track, trigger } from "./effect"
-import { reactivity, ReactivityFlags, readonly } from "./reactivity"
+import { isRef, reactivity, ReactivityFlags, readonly, unRef } from "./reactivity"
 
 function createGetter (isReadonly = false, isShallow = false) {
   return function get (target, key) {
@@ -54,6 +54,19 @@ export const readonlyHandler = {
     console.warn(`key: ${key} 不能被 set，因为 target 是一个 readonly 对象`)
     
     return true
+  }
+}
+
+export const proxyRefHandler = {
+  get: (target, key) => {
+    return unRef(Reflect.get(target, key))
+  },
+  set: (target, key, value) => {
+    if (isRef(target[key]) && !isRef(value)) {
+      return target[key].value = value
+    } else {
+      return Reflect.set(target, key, value)
+    }
   }
 }
 

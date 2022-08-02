@@ -14,6 +14,8 @@ class RefImpl {
 
   deps: Set<ReactiveEffect> = new Set()
 
+  __v_isRef = true
+
   constructor (value) {
     this._rawValue = value
     this._value = convert(value)
