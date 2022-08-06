@@ -21,8 +21,6 @@ export function setupStatefulComponent (instance) {
 
     handleSetupResult(instance, setupResult)
   }
-
-  finishComponentSetup(instance)
 }
 
 function handleSetupResult (instance, setupResult) {
@@ -31,12 +29,12 @@ function handleSetupResult (instance, setupResult) {
   if (typeof setupResult === 'object') {
     instance.setupState = setupResult
   }
+
+  finishComponentSetup(instance)
 }
 
 function finishComponentSetup (instance) {
   const Component = instance.type
 
-  if (Component.render) {
-    instance.render = Component.render
-  }
+  instance.render = Component.render
 }
