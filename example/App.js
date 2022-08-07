@@ -8,11 +8,11 @@ export const App = {
         id: 'root',
         class: ['red', 'hard']
       } ,
-      'hi, ' + this.msg
-      // [
-      //   h('p', { class: 'red' }, 'hi'),
-      //   h('p', { class: 'blue' }, 'mini-vue'),
-      // ]
+      // 'hi, ' + this.msg
+      [
+        h('p', { class: 'red' }, 'hi'),
+        h('p', { class: 'blue' }, 'mini-vue'),
+      ]
     )
   },
   setup () {
