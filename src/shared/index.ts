@@ -7,3 +7,11 @@ export const isObject = (obj: any) => {
 export const hasChanged = (val, newVal) => {
   return !Object.is(val, newVal)
 }
+
+export const isOn = (key: string) => {
+  return /^on[A-Z]/.test(key)
+}
+
+export const getEventName = (name: string) => {
+  return name.slice(2).toLowerCase()
+}
