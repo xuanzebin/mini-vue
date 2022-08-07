@@ -24,22 +24,27 @@ function processElement (vnode, container) {
   mountElement(vnode, container)
 }
 
-function mountComponent (vode, container) {
-  const instance = createComponentInstance(vode)
+function mountComponent (initialVNode, container) {
+  const instance = createComponentInstance(initialVNode)
 
   setupComponent(instance)
-  setupRenderEffect(instance, container)
+  setupRenderEffect(instance, initialVNode, container)
 }
 
-function setupRenderEffect (instance, container) {
-  const subtree = instance.render()
+function setupRenderEffect (instance, initialVNode, container) {
+  const { proxy, render } = instance
+  const subtree = render.call(proxy)
 
   patch(subtree, container)
+
+  initialVNode.el = subtree.el
 }
 
 function mountElement (vnode, container) {
   const { type, props, children } = vnode
   const el: HTMLElement = document.createElement(type)
+  
+  vnode.el = el
 
   for (let key in props) {
     const value = props[key]
