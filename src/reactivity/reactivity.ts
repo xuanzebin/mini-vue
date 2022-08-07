@@ -1,3 +1,4 @@
+import { isObject } from '../shared'
 import {
   mutableHandler,
   proxyRefHandler,
@@ -48,5 +49,11 @@ export function unRef (value) {
 }
 
 function createReactivityObject (raw, handler) {
+  if (!isObject(raw)) {
+    console.warn(`target ${raw} 不是一个 object，无法创建响应式对象`)
+
+    return raw
+  }
+
   return new Proxy(raw, handler)
 }
