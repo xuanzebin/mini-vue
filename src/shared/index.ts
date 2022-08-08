@@ -17,3 +17,13 @@ export const getEventName = (name: string) => {
 }
 
 export const hasOwn = (value, key) => Object.prototype.hasOwnProperty.call(value, key)
+
+export const capitalize = (str: string) => `${str.charAt(0).toUpperCase()}${str.slice(1)}`
+
+export const toHandleKey = (str: string) => `on${capitalize(str)}`
+
+export const camelize = (str: string) => {
+  return str.replace(/-(\w)/g, (_, c: string) => {
+    return c ? c.toUpperCase() : ''
+  })
+}

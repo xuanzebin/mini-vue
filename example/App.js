@@ -8,15 +8,20 @@ export const App = {
       {
         id: 'root',
         class: ['red', 'hard'],
-        onClick () {
-          console.log('click')
-        }
       } ,
       // 'hi, ' + this.msg
       [
         h('p', { class: 'red' }, 'hi'),
         h('p', { class: 'blue' }, 'mini-vue'),
-        h(Foo, { count: 1 }),
+        h(Foo, {
+            count: 1,
+            onFoo() {
+            console.log('foo event')
+          },
+          onFooTwo (a, b) {
+            console.log('foo two', a, b)
+          }
+        }),
       ]
     )
   },
