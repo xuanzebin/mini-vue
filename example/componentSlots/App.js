@@ -1,4 +1,4 @@
-import { h } from '../lib/guide-mini-vue.esm.js'
+import { h } from '../../lib/guide-mini-vue.esm.js'
 import Foo from './Foo.js'
 
 export const App = {
@@ -15,12 +15,9 @@ export const App = {
         h('p', { class: 'blue' }, 'mini-vue'),
         h(Foo, {
             count: 1,
-            onFoo() {
-            console.log('foo event')
-          },
-          onFooTwo (a, b) {
-            console.log('foo two', a, b)
-          }
+        }, {
+          header: ({ age }) => h('p', {}, 'header' + age),
+          footer: () => h('p', {}, 'footer')
         }),
       ]
     )
