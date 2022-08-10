@@ -1,19 +1,31 @@
 import { getEventName, isObject, isOn } from '../shared'
 import { ShapeFlags } from '../shared/ShapeFlags'
 import { createComponentInstance, setupComponent } from './component'
+import { Fragment, Text } from './vnode'
 
 export function render (vnode, container) {
   patch(vnode, container)
 }
 
 function patch (vnode, container) {
-  const { shapeflag } = vnode
-  if (shapeflag & ShapeFlags.ELEMENT) {
-    // 处理元素
-    processElement(vnode, container)
-  } else if (shapeflag & ShapeFlags.STATEFUL_COMPONENT) {
-    // 处理组件
-    processComponent(vnode, container)
+  const { type, shapeflag } = vnode
+
+  switch (type) {
+    case Fragment:
+      processFragment(vnode, container)
+      break
+    case Text:
+      processTextNode(vnode, container)
+      break
+    default:
+      if (shapeflag & ShapeFlags.ELEMENT) {
+        // 处理元素
+        processElement(vnode, container)
+      } else if (shapeflag & ShapeFlags.STATEFUL_COMPONENT) {
+        // 处理组件
+        processComponent(vnode, container)
+      }
+      break
   }
 }
 
@@ -23,6 +35,18 @@ function processComponent (vnode, container) {
 
 function processElement (vnode, container) {
   mountElement(vnode, container)
+}
+
+function processFragment (vnode, container) {
+  mountChildren(vnode, container)
+}
+
+function processTextNode (vnode, container) {
+  const { children } = vnode
+  const textNode = document.createTextNode(children)
+
+  vnode.el = textNode
+  container.append(textNode)
 }
 
 function mountComponent (initialVNode, container) {
